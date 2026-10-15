@@ -131,12 +131,15 @@ fun MainAppScreen(viewModel: MainViewModel) {
     ) {
         if (!uiState.isLoggedIn) {
             LoginScreen(
+                appsScriptUrl = uiState.appsScriptUrl,
                 email = uiState.loginEmail,
                 code = uiState.loginCode,
                 step = uiState.loginStep,
                 msg = uiState.loginMsg,
                 isError = uiState.loginIsError,
                 isLoading = uiState.isLoggingIn,
+                onUrlSubmit = { viewModel.submitAppsScriptUrlAndProceed(it) },
+                onBackToUrl = { viewModel.backToUrl() },
                 onEmailChange = { viewModel.setLoginEmail(it) },
                 onCodeChange = { viewModel.setLoginCode(it) },
                 onRequestCode = { viewModel.requestCode() },

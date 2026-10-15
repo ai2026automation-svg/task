@@ -173,6 +173,27 @@ class MainViewModel(
     }
 
     // AUTH
+    fun setLoginStep(step: Int) {
+        _uiState.update { it.copy(loginStep = step, loginMsg = "") }
+    }
+
+    fun submitAppsScriptUrlAndProceed(url: String) {
+        val trimmed = url.trim()
+        preferences.appsScriptUrl = trimmed
+        _uiState.update {
+            it.copy(
+                appsScriptUrl = trimmed,
+                loginStep = 1,
+                loginMsg = if (trimmed.isNotBlank()) "Connected to Apps Script! Enter your email to authenticate." else "",
+                loginIsError = false
+            )
+        }
+    }
+
+    fun backToUrl() {
+        _uiState.update { it.copy(loginStep = 0, loginMsg = "") }
+    }
+
     fun setLoginEmail(email: String) {
         _uiState.update { it.copy(loginEmail = email, loginMsg = "") }
     }
