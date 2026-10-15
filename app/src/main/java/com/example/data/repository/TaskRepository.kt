@@ -35,124 +35,7 @@ class TaskRepository(
     private var localOtpEmail: String? = null
 
     suspend fun initializeDefaultDataIfEmpty() {
-        val existingUsers = userDao.getAllUsers().first()
-        if (existingUsers.isEmpty()) {
-            val defaultUsers = listOf(
-                UserEntity(
-                    email = "automation@starterscfo.in",
-                    rowNum = 2,
-                    name = "Avadhesh",
-                    designation = "Automation Manager",
-                    department = "Automation",
-                    role = "Admin"
-                ),
-                UserEntity(
-                    email = "excelwithavi@gmail.com",
-                    rowNum = 3,
-                    name = "Amit",
-                    designation = "Accountant",
-                    department = "Accounts",
-                    role = "User"
-                ),
-                UserEntity(
-                    email = "finance.lead@company.com",
-                    rowNum = 4,
-                    name = "Priya Sharma",
-                    designation = "Finance Lead",
-                    department = "Accounts",
-                    role = "Moderator"
-                )
-            )
-            userDao.insertUsers(defaultUsers)
-
-            // Seed initial realistic tasks
-            val today = DateUtils.startOfDay()
-            val sampleTasks = listOf(
-                TaskEntity(
-                    id = "REC-1",
-                    rowNum = 2,
-                    sno = 1,
-                    task = "GST Monthly Filing (GSTR-3B)",
-                    type = "RECURRING",
-                    doerName = "Amit",
-                    doerEmail = "excelwithavi@gmail.com",
-                    designation = "Accountant",
-                    frequency = "Monthly",
-                    dueDate = DateUtils.formatDate(DateUtils.addDays(today, 5)),
-                    status = "Pending",
-                    assignedBy = "Avadhesh",
-                    assignedByEmail = "automation@starterscfo.in",
-                    dueEpochMillis = DateUtils.addDays(today, 5).time
-                ),
-                TaskEntity(
-                    id = "REC-2",
-                    rowNum = 3,
-                    sno = 2,
-                    task = "Bank Statement & Ledger Reconciliation",
-                    type = "RECURRING",
-                    doerName = "Amit",
-                    doerEmail = "excelwithavi@gmail.com",
-                    designation = "Accountant",
-                    frequency = "Weekly",
-                    dueDate = DateUtils.formatDate(DateUtils.addDays(today, -2)),
-                    status = "Delay",
-                    delay = "2",
-                    assignedBy = "Avadhesh",
-                    assignedByEmail = "automation@starterscfo.in",
-                    dueEpochMillis = DateUtils.addDays(today, -2).time
-                ),
-                TaskEntity(
-                    id = "REC-3",
-                    rowNum = 4,
-                    sno = 3,
-                    task = "Daily Cashflow Summary & Bank Position",
-                    type = "RECURRING",
-                    doerName = "Avadhesh",
-                    doerEmail = "automation@starterscfo.in",
-                    designation = "Automation Manager",
-                    frequency = "Daily",
-                    dueDate = DateUtils.formatDate(DateUtils.addDays(today, -1)),
-                    completedDate = DateUtils.formatTimestamp(DateUtils.addDays(today, -1)),
-                    status = "On Time",
-                    remarks = "All bank accounts updated and synced",
-                    assignedBy = "Avadhesh",
-                    assignedByEmail = "automation@starterscfo.in",
-                    dueEpochMillis = DateUtils.addDays(today, -1).time
-                ),
-                TaskEntity(
-                    id = "OTT-01",
-                    rowNum = 2,
-                    taskId = "OTT-1014-A19F",
-                    task = "Prepare FY Q3 Board Presentation MIS",
-                    type = "ONE_TIME",
-                    doerName = "Priya Sharma",
-                    doerEmail = "finance.lead@company.com",
-                    priority = "High",
-                    dueDate = DateUtils.formatDate(DateUtils.addDays(today, 3)),
-                    status = "Pending",
-                    assignedBy = "Avadhesh",
-                    assignedByEmail = "automation@starterscfo.in",
-                    dueEpochMillis = DateUtils.addDays(today, 3).time
-                ),
-                TaskEntity(
-                    id = "OTT-02",
-                    rowNum = 3,
-                    taskId = "OTT-1012-78BC",
-                    task = "Statutory TDS Return Verification",
-                    type = "ONE_TIME",
-                    doerName = "Amit",
-                    doerEmail = "excelwithavi@gmail.com",
-                    priority = "Medium",
-                    dueDate = DateUtils.formatDate(DateUtils.addDays(today, -3)),
-                    status = "Delay",
-                    delay = "3",
-                    assignedBy = "Priya Sharma",
-                    assignedByEmail = "finance.lead@company.com",
-                    dueEpochMillis = DateUtils.addDays(today, -3).time
-                )
-            )
-            taskDao.insertTasks(sampleTasks)
-        }
+        // No mock data - live data is synced directly from the user's Google Apps Script backend
     }
 
     suspend fun requestLoginCode(email: String): Result<String> {
@@ -161,79 +44,202 @@ class TaskRepository(
             return Result.failure(IllegalArgumentException("Please enter a valid email address."))
         }
 
-        // Try Remote Apps Script first if URL is configured
-        if (preferences.appsScriptUrl.isNotBlank()) {
-            val remoteResult = apiClient.callAction("requestLoginCode", params = mapOf("email" to cleanEmail))
-            if (remoteResult.isSuccess) {
-                return Result.success("Code sent to $cleanEmail via Google Apps Script.")
-            }
+        if (preferences.appsScriptUrl.isBlank()) {
+            return Result.failure(IllegalStateException("Please enter your Google Apps Script Web App URL first."))
         }
 
-        // Local / Offline fallback
-        val user = userDao.getUserByEmail(cleanEmail)
-        val isBootstrapAdmin = cleanEmail == "automation@starterscfo.in"
-        if (user == null && !isBootstrapAdmin) {
-            return Result.failure(IllegalArgumentException("This email is not authorised in the system."))
+        val remoteResult = apiClient.callAction("requestLoginCode", params = mapOf("email" to cleanEmail))
+        return if (remoteResult.isSuccess) {
+            Result.success("Code sent to $cleanEmail via Google Apps Script.")
+        } else {
+            Result.failure(remoteResult.exceptionOrNull() ?: Exception("Failed to send code via Apps Script."))
         }
-
-        val code = (100000..999999).random().toString()
-        localOtpCode = code
-        localOtpEmail = cleanEmail
-
-        return Result.success(code)
     }
 
     suspend fun verifyLoginCode(email: String, code: String): Result<AuthSession> {
         val cleanEmail = email.trim().lowercase()
         val cleanCode = code.trim()
 
-        // Remote Apps Script attempt
-        if (preferences.appsScriptUrl.isNotBlank()) {
-            val remoteResult = apiClient.callAction("verifyLoginCode", params = mapOf("email" to cleanEmail, "code" to cleanCode))
-            if (remoteResult.isSuccess) {
-                val json = remoteResult.getOrThrow()
-                val token = json.optString("token", UUID.randomUUID().toString())
-                val userObj = json.optJSONObject("user")
-                val name = userObj?.optString("name", cleanEmail.substringBefore("@")) ?: cleanEmail.substringBefore("@")
-                val roleStr = userObj?.optString("role", "USER") ?: "USER"
-                val dept = userObj?.optString("department", "") ?: ""
-                val desig = userObj?.optString("designation", "") ?: ""
-                val role = UserRole.fromString(roleStr)
+        if (preferences.appsScriptUrl.isBlank()) {
+            return Result.failure(IllegalStateException("Please enter your Google Apps Script Web App URL first."))
+        }
 
-                val user = User(name = name, designation = desig, email = cleanEmail, department = dept, role = role)
-                preferences.saveUserSession(token, cleanEmail, name, role.name, dept, desig)
+        val remoteResult = apiClient.callAction("verifyLoginCode", params = mapOf("email" to cleanEmail, "code" to cleanCode))
+        if (remoteResult.isSuccess) {
+            val json = remoteResult.getOrThrow()
+            val token = json.optString("token", UUID.randomUUID().toString())
+            val userObj = json.optJSONObject("user")
+            val name = userObj?.optString("name", cleanEmail.substringBefore("@")) ?: cleanEmail.substringBefore("@")
+            val roleStr = userObj?.optString("role", "USER") ?: "USER"
+            val dept = userObj?.optString("department", "") ?: ""
+            val desig = userObj?.optString("designation", "") ?: ""
+            val role = UserRole.fromString(roleStr)
 
-                val doers = getScopedDoers(user)
-                return Result.success(AuthSession(token, user, UserPermissions.forRole(role), doers = doers))
+            val user = User(
+                row = userObj?.optInt("row", 2) ?: 2,
+                name = name,
+                designation = desig,
+                email = cleanEmail,
+                department = dept,
+                role = role
+            )
+            preferences.saveUserSession(token, cleanEmail, name, role.name, dept, desig)
+
+            // Cache user locally
+            userDao.insertUser(
+                UserEntity(
+                    email = cleanEmail,
+                    rowNum = user.row,
+                    name = user.name,
+                    designation = user.designation,
+                    department = user.department,
+                    role = user.role.name
+                )
+            )
+
+            // Sync doers returned from Apps Script if present
+            val doersArray = json.optJSONArray("doers")
+            if (doersArray != null && doersArray.length() > 0) {
+                val doerEntities = mutableListOf<UserEntity>()
+                for (i in 0 until doersArray.length()) {
+                    val d = doersArray.getJSONObject(i)
+                    val dEmail = d.optString("email", "")
+                    val dName = d.optString("name", "")
+                    if (dName.isNotBlank()) {
+                        doerEntities.add(
+                            UserEntity(
+                                email = if (dEmail.isNotBlank()) dEmail else "$dName@company.com",
+                                rowNum = i + 2,
+                                name = dName,
+                                designation = d.optString("designation", ""),
+                                department = d.optString("department", ""),
+                                role = "User"
+                            )
+                        )
+                    }
+                }
+                userDao.insertUsers(doerEntities)
+            }
+
+            // Sync real tasks from Google Apps Script
+            syncFromAppsScript(user)
+
+            val doers = getScopedDoers(user)
+            return Result.success(AuthSession(token, user, UserPermissions.forRole(role), doers = doers))
+        } else {
+            return Result.failure(remoteResult.exceptionOrNull() ?: Exception("Verification failed on Google Apps Script."))
+        }
+    }
+
+    suspend fun syncFromAppsScript(currentUser: User) {
+        if (preferences.appsScriptUrl.isBlank()) return
+
+        // 1. Sync recurring tasks
+        val recResult = apiClient.callAction("listRecurring", token = preferences.sessionToken, params = mapOf("opts" to mapOf("all" to true)))
+        if (recResult.isSuccess) {
+            val json = recResult.getOrThrow()
+            val rowsArray = json.optJSONArray("rows")
+            if (rowsArray != null) {
+                val taskEntities = mutableListOf<TaskEntity>()
+                for (i in 0 until rowsArray.length()) {
+                    val r = rowsArray.getJSONObject(i)
+                    val dueStr = r.optString("dueDate", "")
+                    val dueMillis = DateUtils.parseDate(dueStr)?.time ?: 0L
+                    val sno = r.optInt("sno", i + 1)
+                    taskEntities.add(
+                        TaskEntity(
+                            id = "REC-$sno-$i",
+                            rowNum = r.optInt("_row", i + 2),
+                            sno = sno,
+                            task = r.optString("task", ""),
+                            type = "RECURRING",
+                            doerName = r.optString("doer", ""),
+                            doerEmail = r.optString("doerEmail", ""),
+                            designation = r.optString("designation", ""),
+                            frequency = r.optString("frequency", ""),
+                            dueDate = dueStr,
+                            completedDate = r.optString("completedDate", ""),
+                            delay = r.optString("delay", ""),
+                            status = r.optString("status", "Pending"),
+                            remarks = r.optString("remarks", ""),
+                            attachFile = r.optString("attachFile", ""),
+                            dueEpochMillis = dueMillis
+                        )
+                    )
+                }
+                taskDao.clearTasksByType("RECURRING")
+                taskDao.insertTasks(taskEntities)
             }
         }
 
-        // Local verification
-        if (cleanCode != localOtpCode && cleanCode != "123456") {
-            return Result.failure(IllegalArgumentException("Incorrect or expired code. (Tip: for offline demo you can use 123456)"))
+        // 2. Sync one-time tasks
+        val ottResult = apiClient.callAction("listOneTime", token = preferences.sessionToken, params = mapOf("opts" to mapOf("all" to true)))
+        if (ottResult.isSuccess) {
+            val json = ottResult.getOrThrow()
+            val rowsArray = json.optJSONArray("rows")
+            if (rowsArray != null) {
+                val ottEntities = mutableListOf<TaskEntity>()
+                for (i in 0 until rowsArray.length()) {
+                    val r = rowsArray.getJSONObject(i)
+                    val dueStr = r.optString("dueDate", "")
+                    val dueMillis = DateUtils.parseDate(dueStr)?.time ?: 0L
+                    val taskId = r.optString("taskId", "OTT-$i")
+                    ottEntities.add(
+                        TaskEntity(
+                            id = taskId,
+                            rowNum = r.optInt("_row", i + 2),
+                            taskId = taskId,
+                            task = r.optString("task", ""),
+                            type = "ONE_TIME",
+                            doerName = r.optString("doer", ""),
+                            doerEmail = r.optString("doerEmail", ""),
+                            priority = r.optString("priority", "Medium"),
+                            assignedBy = r.optString("assignedBy", ""),
+                            assignerFile = r.optString("assignerFile", ""),
+                            dueDate = dueStr,
+                            completedDate = r.optString("completedDate", ""),
+                            delay = r.optString("delay", ""),
+                            status = r.optString("status", "Pending"),
+                            remarks = r.optString("remarks", ""),
+                            attachFile = r.optString("attachFile", ""),
+                            dueEpochMillis = dueMillis
+                        )
+                    )
+                }
+                taskDao.clearTasksByType("ONE_TIME")
+                taskDao.insertTasks(ottEntities)
+            }
         }
 
-        val localUser = userDao.getUserByEmail(cleanEmail)
-        val role = when {
-            cleanEmail == "automation@starterscfo.in" -> UserRole.ADMIN
-            localUser != null -> UserRole.fromString(localUser.role)
-            else -> UserRole.USER
+        // 3. Sync Users if Admin
+        if (currentUser.role == UserRole.ADMIN) {
+            val usersResult = apiClient.callAction("listUsers", token = preferences.sessionToken)
+            if (usersResult.isSuccess) {
+                val json = usersResult.getOrThrow()
+                val usersArray = json.optJSONArray("users")
+                if (usersArray != null) {
+                    val userEntities = mutableListOf<UserEntity>()
+                    for (i in 0 until usersArray.length()) {
+                        val u = usersArray.getJSONObject(i)
+                        val email = u.optString("email", "")
+                        if (email.isNotBlank()) {
+                            userEntities.add(
+                                UserEntity(
+                                    email = email,
+                                    rowNum = u.optInt("_row", i + 2),
+                                    name = u.optString("name", email.substringBefore("@")),
+                                    designation = u.optString("designation", ""),
+                                    department = u.optString("department", ""),
+                                    role = u.optString("role", "User")
+                                )
+                            )
+                        }
+                    }
+                    userDao.clearAll()
+                    userDao.insertUsers(userEntities)
+                }
+            }
         }
-
-        val user = User(
-            row = localUser?.rowNum ?: 2,
-            name = localUser?.name ?: cleanEmail.substringBefore("@"),
-            designation = localUser?.designation ?: "",
-            email = cleanEmail,
-            department = localUser?.department ?: "",
-            role = role
-        )
-
-        val token = UUID.randomUUID().toString()
-        preferences.saveUserSession(token, cleanEmail, user.name, role.name, user.department, user.designation)
-        val doers = getScopedDoers(user)
-
-        return Result.success(AuthSession(token, user, UserPermissions.forRole(role), doers = doers))
     }
 
     suspend fun getScopedDoers(currentUser: User): List<User> {

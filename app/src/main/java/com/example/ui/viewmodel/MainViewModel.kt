@@ -333,6 +333,7 @@ class MainViewModel(
     fun refreshData() {
         val user = _uiState.value.currentUser ?: return
         viewModelScope.launch {
+            repository.syncFromAppsScript(user)
             val scoped = repository.getScopedDoers(user)
             val metrics = repository.calculateDashboard(
                 currentUser = user,

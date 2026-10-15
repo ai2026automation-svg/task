@@ -39,6 +39,9 @@ interface TaskDao {
     @Query("UPDATE tasks SET task = :newTask, doerName = :newDoer, designation = :newDesignation WHERE task = :oldTask AND doerName = :oldDoer AND frequency = :freq AND LOWER(assignedByEmail) = LOWER(:assignerEmail) AND (completedDate = '' OR completedDate IS NULL)")
     suspend fun updateRecurringSeries(oldTask: String, oldDoer: String, freq: String, assignerEmail: String, newTask: String, newDoer: String, newDesignation: String): Int
 
+    @Query("DELETE FROM tasks WHERE type = :type")
+    suspend fun clearTasksByType(type: String)
+
     @Query("DELETE FROM tasks")
     suspend fun clearAll()
 }

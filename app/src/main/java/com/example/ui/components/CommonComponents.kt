@@ -156,19 +156,21 @@ fun TopBar(
                         )
                     }
 
-                    // Logout
+                    // Sign out button matching HTML
                     if (currentUser != null) {
-                        IconButton(
-                            onClick = onLogout,
+                        Box(
                             modifier = Modifier
-                                .size(36.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .border(1.dp, Color.White.copy(alpha = 0.35f), RoundedCornerShape(8.dp))
+                                .clickable { onLogout() }
+                                .padding(horizontal = 10.dp, vertical = 5.dp)
                                 .testTag("btn_logout")
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Logout,
-                                contentDescription = "Sign Out",
-                                tint = Color.White.copy(alpha = 0.8f),
-                                modifier = Modifier.size(18.dp)
+                            Text(
+                                text = "Sign out",
+                                color = Color.White,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium
                             )
                         }
                     }
