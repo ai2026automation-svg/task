@@ -49,6 +49,7 @@ data class MainUiState(
     val connectionStatus: String = "",
     val isTestingConnection: Boolean = false,
     val showServerConfigDialog: Boolean = false,
+    val showProfileDialog: Boolean = false,
 
     // Dashboard
     val dashboardMetrics: DashboardMetrics = DashboardMetrics(),
@@ -305,6 +306,10 @@ class MainViewModel(
     }
 
     // SERVER / APPS SCRIPT CONFIG
+    fun toggleProfileDialog(show: Boolean) {
+        _uiState.update { it.copy(showProfileDialog = show) }
+    }
+
     fun toggleServerConfigDialog(show: Boolean) {
         _uiState.update { it.copy(showServerConfigDialog = show, connectionStatus = "") }
     }

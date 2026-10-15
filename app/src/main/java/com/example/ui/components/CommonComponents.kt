@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,16 +18,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CloudDone
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -64,84 +69,92 @@ import com.example.ui.theme.TextMuted
 fun TopBar(
     currentUser: User?,
     isAppsScriptConnected: Boolean,
-    onOpenServerConfig: () -> Unit,
-    onLogout: () -> Unit
+    onOpenProfile: () -> Unit,
+    onOpenServerConfig: () -> Unit
 ) {
     Surface(
         color = NavyPrimary,
-        shadowElevation = 4.dp,
+        shadowElevation = 3.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                    .padding(horizontal = 14.dp, vertical = 9.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Brand Logo & Subtitle
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(Color.White)
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "SMARTFIN",
-                                fontWeight = FontWeight.ExtraBold,
-                                fontSize = 14.sp,
-                                color = NavyPrimary,
-                                letterSpacing = 0.5.sp
-                            )
-                            Text(
-                                text = "CFO",
-                                fontWeight = FontWeight.ExtraBold,
-                                fontSize = 14.sp,
-                                color = OrangePrimary,
-                                letterSpacing = 0.5.sp
-                            )
-                        }
+                // Sleek, compact Brand Badge
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Color.White)
+                        .padding(horizontal = 9.dp, vertical = 4.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "SMARTFIN",
+                            fontWeight = FontWeight.Black,
+                            fontSize = 13.5.sp,
+                            color = NavyPrimary,
+                            letterSpacing = 0.5.sp
+                        )
+                        Text(
+                            text = "CFO",
+                            fontWeight = FontWeight.Black,
+                            fontSize = 13.5.sp,
+                            color = OrangePrimary,
+                            letterSpacing = 0.5.sp
+                        )
                     }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(
-                        text = "Task Manager",
-                        fontSize = 12.sp,
-                        color = Color.White.copy(alpha = 0.9f),
-                        fontWeight = FontWeight.Medium
-                    )
                 }
 
-                // User Info & Actions
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (currentUser != null) {
-                        Text(
-                            text = currentUser.name,
-                            color = Color.White,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(GoldAccent)
-                                .padding(horizontal = 8.dp, vertical = 2.dp)
+                // Sleek Profile Option Button
+                if (currentUser != null) {
+                    Surface(
+                        onClick = onOpenProfile,
+                        shape = RoundedCornerShape(20.dp),
+                        color = NavySecondary,
+                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.22f)),
+                        modifier = Modifier.testTag("btn_profile")
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(start = 4.dp, end = 10.dp, top = 3.dp, bottom = 3.dp)
                         ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(26.dp)
+                                    .clip(CircleShape)
+                                    .background(OrangePrimary),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = currentUser.name.take(1).uppercase(),
+                                    color = Color.White,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.ExtraBold
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(7.dp))
                             Text(
-                                text = currentUser.role.name,
-                                color = NavyPrimary,
-                                fontSize = 9.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                letterSpacing = 0.5.sp
+                                text = "Profile",
+                                color = Color.White,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            // Server connectivity status dot
+                            Box(
+                                modifier = Modifier
+                                    .size(7.dp)
+                                    .clip(CircleShape)
+                                    .background(if (isAppsScriptConnected) Color(0xFF4CAF50) else GoldAccent)
                             )
                         }
-                        Spacer(modifier = Modifier.width(4.dp))
                     }
-
-                    // Apps Script connectivity indicator
+                } else {
                     IconButton(
                         onClick = onOpenServerConfig,
                         modifier = Modifier
@@ -150,40 +163,225 @@ fun TopBar(
                     ) {
                         Icon(
                             imageVector = if (isAppsScriptConnected) Icons.Default.CloudDone else Icons.Default.CloudOff,
-                            contentDescription = "Google Apps Script Server Connection",
+                            contentDescription = "Server Connection",
                             tint = if (isAppsScriptConnected) Color(0xFF4CAF50) else GoldAccent,
                             modifier = Modifier.size(20.dp)
                         )
                     }
+                }
+            }
 
-                    // Sign out button matching HTML
-                    if (currentUser != null) {
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                .border(1.dp, Color.White.copy(alpha = 0.35f), RoundedCornerShape(8.dp))
-                                .clickable { onLogout() }
-                                .padding(horizontal = 10.dp, vertical = 5.dp)
-                                .testTag("btn_logout")
+            // Subtle Gold accent line
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(2.dp)
+                    .background(GoldAccent)
+            )
+        }
+    }
+}
+
+@Composable
+fun ProfileDialog(
+    user: User,
+    isAppsScriptConnected: Boolean,
+    onOpenServerConfig: () -> Unit,
+    onLogout: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = NavyPrimary,
+            border = BorderStroke(2.dp, GoldAccent.copy(alpha = 0.8f)),
+            shadowElevation = 16.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+                .testTag("dialog_profile")
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Header with Close
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "My Profile",
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                    IconButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close",
+                            tint = Color.White.copy(alpha = 0.8f),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Avatar Circle
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(CircleShape)
+                        .background(OrangePrimary)
+                        .border(2.dp, GoldAccent, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = user.name.take(1).uppercase(),
+                        color = Color.White,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // User Full Name
+                Text(
+                    text = user.name,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Role Pill
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(GoldAccent)
+                        .padding(horizontal = 10.dp, vertical = 3.dp)
+                ) {
+                    Text(
+                        text = user.role.name.replace("_", " "),
+                        color = NavyPrimary,
+                        fontSize = 10.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = 0.5.sp
+                    )
+                }
+
+                if (user.email.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = user.email,
+                        fontSize = 12.sp,
+                        color = Color(0xFFC7D2FE)
+                    )
+                }
+
+                if (user.department.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "Department: ${user.department}",
+                        fontSize = 11.5.sp,
+                        color = Color.White.copy(alpha = 0.6f)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(18.dp))
+
+                // Server Status Card
+                Surface(
+                    color = NavySecondary,
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, LineBorder),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
                         ) {
-                            Text(
-                                text = "Sign out",
-                                color = Color.White,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Medium
+                            Icon(
+                                imageVector = if (isAppsScriptConnected) Icons.Default.CloudDone else Icons.Default.CloudOff,
+                                contentDescription = null,
+                                tint = if (isAppsScriptConnected) Color(0xFF4CAF50) else GoldAccent,
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Column {
+                                Text(
+                                    text = "Google Apps Script",
+                                    fontSize = 12.5.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = if (isAppsScriptConnected) "Connected to server" else "URL not configured",
+                                    fontSize = 10.5.sp,
+                                    color = if (isAppsScriptConnected) Color(0xFF81C784) else GoldAccent
+                                )
+                            }
+                        }
+
+                        IconButton(
+                            onClick = onOpenServerConfig,
+                            modifier = Modifier
+                                .size(36.dp)
+                                .testTag("btn_server_config")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "Configure Server",
+                                tint = Color.White.copy(alpha = 0.85f),
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     }
                 }
-            }
 
-            // Gold divider line from HTML style
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(3.dp)
-                    .background(GoldAccent)
-            )
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // Actions: Sign Out button
+                Button(
+                    onClick = onLogout,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFDC2626)),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(44.dp)
+                        .testTag("btn_logout")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Logout,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Sign Out",
+                        color = Color.White,
+                        fontSize = 13.5.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
         }
     }
 }

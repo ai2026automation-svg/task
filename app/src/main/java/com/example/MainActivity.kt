@@ -18,19 +18,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddTask
 import androidx.compose.material.icons.filled.AssignmentTurnedIn
@@ -66,6 +65,7 @@ import com.example.data.local.AppDatabase
 import com.example.data.local.TaskPreferences
 import com.example.data.remote.AppsScriptClient
 import com.example.data.repository.TaskRepository
+import com.example.ui.components.ProfileDialog
 import com.example.ui.components.TopBar
 import com.example.ui.dialogs.AppsScriptConfigDialog
 import com.example.ui.dialogs.CompleteTaskDialog
@@ -160,12 +160,12 @@ fun MainAppScreen(viewModel: MainViewModel) {
             )
         } else {
             Column(modifier = Modifier.fillMaxSize()) {
-                // Top Brand Bar
+                // Top Brand Bar (Compact & Sleek)
                 TopBar(
                     currentUser = uiState.currentUser,
                     isAppsScriptConnected = uiState.appsScriptUrl.isNotBlank(),
-                    onOpenServerConfig = { viewModel.toggleServerConfigDialog(true) },
-                    onLogout = { viewModel.logout() }
+                    onOpenProfile = { viewModel.toggleProfileDialog(true) },
+                    onOpenServerConfig = { viewModel.toggleServerConfigDialog(true) }
                 )
 
                 // Tab Content
@@ -335,6 +335,24 @@ fun MainAppScreen(viewModel: MainViewModel) {
             )
         }
 
+        if (uiState.showProfileDialog) {
+            uiState.currentUser?.let { currentUser ->
+                ProfileDialog(
+                    user = currentUser,
+                    isAppsScriptConnected = uiState.appsScriptUrl.isNotBlank(),
+                    onOpenServerConfig = {
+                        viewModel.toggleProfileDialog(false)
+                        viewModel.toggleServerConfigDialog(true)
+                    },
+                    onLogout = {
+                        viewModel.toggleProfileDialog(false)
+                        viewModel.logout()
+                    },
+                    onDismiss = { viewModel.toggleProfileDialog(false) }
+                )
+            }
+        }
+
         // Toast Notification Overlay
         AnimatedVisibility(
             visible = uiState.toastMessage != null,
@@ -379,53 +397,51 @@ fun AppBottomNavigationBar(
 ) {
     Surface(
         color = NavyPrimary,
-        shadowElevation = 10.dp,
+        shadowElevation = 8.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column {
             // Subtle top gold accent separator line
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(1.5.dp)
-                    .background(GoldAccent.copy(alpha = 0.45f))
+                    .background(NavySecondary)
             )
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(64.dp)
-                    .padding(horizontal = 4.dp),
+                    .padding(horizontal = 4.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                // Dashboard Tab with Home Icon as requested
                 BottomNavItem(
                     tab = AppTab.DASHBOARD,
-                    label = "Home",
                     icon = Icons.Default.Home,
+                    label = "Dashboard",
                     isActive = currentTab == AppTab.DASHBOARD,
                     onClick = { onTabSelected(AppTab.DASHBOARD) }
                 )
                 BottomNavItem(
                     tab = AppTab.RECURRING,
-                    label = "Recurring",
                     icon = Icons.Default.Repeat,
+                    label = "Recurring",
                     isActive = currentTab == AppTab.RECURRING,
                     onClick = { onTabSelected(AppTab.RECURRING) }
                 )
                 BottomNavItem(
                     tab = AppTab.ONETIME,
-                    label = "One-Time",
                     icon = Icons.Default.AssignmentTurnedIn,
+                    label = "One-Time",
                     isActive = currentTab == AppTab.ONETIME,
                     onClick = { onTabSelected(AppTab.ONETIME) }
                 )
                 if (canAssign) {
                     BottomNavItem(
                         tab = AppTab.ASSIGN,
-                        label = "Assign",
                         icon = Icons.Default.AddTask,
+                        label = "Assign",
                         isActive = currentTab == AppTab.ASSIGN,
                         onClick = { onTabSelected(AppTab.ASSIGN) }
                     )
@@ -433,8 +449,8 @@ fun AppBottomNavigationBar(
                 if (canManageUsers) {
                     BottomNavItem(
                         tab = AppTab.USERS,
-                        label = "Users",
                         icon = Icons.Default.People,
+                        label = "Users",
                         isActive = currentTab == AppTab.USERS,
                         onClick = { onTabSelected(AppTab.USERS) }
                     )
@@ -447,22 +463,17 @@ fun AppBottomNavigationBar(
 @Composable
 private fun RowScope.BottomNavItem(
     tab: AppTab,
-    label: String,
     icon: ImageVector,
+    label: String,
     isActive: Boolean,
     onClick: () -> Unit
 ) {
-    val activeColor = OrangePrimary
-    val inactiveColor = Color(0xFF94A3B8)
-    val color = if (isActive) activeColor else inactiveColor
-
     Box(
         modifier = Modifier
             .weight(1f)
-            .fillMaxHeight()
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(12.dp))
             .clickable(onClick = onClick)
-            .padding(vertical = 4.dp)
+            .padding(vertical = 4.dp, horizontal = 2.dp)
             .testTag("tab_${tab.name.lowercase()}"),
         contentAlignment = Alignment.Center
     ) {
@@ -472,26 +483,25 @@ private fun RowScope.BottomNavItem(
         ) {
             Box(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(if (isActive) NavySecondary else Color.Transparent)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(if (isActive) OrangePrimary.copy(alpha = 0.2f) else Color.Transparent)
                     .padding(horizontal = 14.dp, vertical = 4.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = label,
-                    tint = color,
+                    tint = if (isActive) OrangePrimary else Color(0xFF94A3B8),
                     modifier = Modifier.size(22.dp)
                 )
             }
-            Spacer(modifier = Modifier.height(2.dp))
+            Spacer(modifier = Modifier.height(3.dp))
             Text(
                 text = label,
-                fontSize = 11.sp,
+                fontSize = 10.5.sp,
                 fontWeight = if (isActive) FontWeight.Bold else FontWeight.Medium,
-                color = color,
-                maxLines = 1,
-                textAlign = TextAlign.Center
+                color = if (isActive) OrangePrimary else Color(0xFF94A3B8),
+                maxLines = 1
             )
         }
     }
