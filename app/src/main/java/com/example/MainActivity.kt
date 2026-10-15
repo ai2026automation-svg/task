@@ -18,16 +18,26 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddTask
+import androidx.compose.material.icons.filled.AssignmentTurnedIn
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -42,6 +52,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -155,14 +166,6 @@ fun MainAppScreen(viewModel: MainViewModel) {
                     isAppsScriptConnected = uiState.appsScriptUrl.isNotBlank(),
                     onOpenServerConfig = { viewModel.toggleServerConfigDialog(true) },
                     onLogout = { viewModel.logout() }
-                )
-
-                // Tabs Navigation Header
-                NavigationBarTabs(
-                    currentTab = uiState.currentTab,
-                    canAssign = uiState.permissions.assignRecurring || uiState.permissions.assignOneTime,
-                    canManageUsers = uiState.permissions.manageUsers,
-                    onTabSelected = { viewModel.setAppTab(it) }
                 )
 
                 // Tab Content
@@ -283,38 +286,13 @@ fun MainAppScreen(viewModel: MainViewModel) {
                     }
                 }
 
-                // Brand Footer matching HTML
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(NavyPrimary)
-                        .border(androidx.compose.foundation.BorderStroke(2.dp, GoldAccent))
-                        .padding(vertical = 10.dp, horizontal = 16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = "SMARTFIN",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                        Text(
-                            text = "CFO",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = OrangePrimary
-                        )
-                        Text(
-                            text = " · Clarity Today · Confidence Tomorrow · Growth Always",
-                            fontSize = 10.sp,
-                            color = Color(0xFFC7D2FE)
-                        )
-                    }
-                }
+                // Mobile Bottom Navigation Bar with icons (Home for dashboard)
+                AppBottomNavigationBar(
+                    currentTab = uiState.currentTab,
+                    canAssign = uiState.permissions.assignRecurring || uiState.permissions.assignOneTime,
+                    canManageUsers = uiState.permissions.manageUsers,
+                    onTabSelected = { viewModel.setAppTab(it) }
+                )
             }
         }
 
@@ -393,80 +371,127 @@ fun MainAppScreen(viewModel: MainViewModel) {
 }
 
 @Composable
-fun NavigationBarTabs(
+fun AppBottomNavigationBar(
     currentTab: AppTab,
     canAssign: Boolean,
     canManageUsers: Boolean,
     onTabSelected: (AppTab) -> Unit
 ) {
     Surface(
-        color = NavySecondary,
+        color = NavyPrimary,
+        shadowElevation = 10.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState())
-                .padding(horizontal = 8.dp)
-        ) {
-            TabButton(
-                tab = AppTab.DASHBOARD,
-                isActive = currentTab == AppTab.DASHBOARD,
-                onClick = { onTabSelected(AppTab.DASHBOARD) }
+        Column(modifier = Modifier.fillMaxWidth()) {
+            // Subtle top gold accent separator line
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.5.dp)
+                    .background(GoldAccent.copy(alpha = 0.45f))
             )
-            TabButton(
-                tab = AppTab.RECURRING,
-                isActive = currentTab == AppTab.RECURRING,
-                onClick = { onTabSelected(AppTab.RECURRING) }
-            )
-            TabButton(
-                tab = AppTab.ONETIME,
-                isActive = currentTab == AppTab.ONETIME,
-                onClick = { onTabSelected(AppTab.ONETIME) }
-            )
-            if (canAssign) {
-                TabButton(
-                    tab = AppTab.ASSIGN,
-                    isActive = currentTab == AppTab.ASSIGN,
-                    onClick = { onTabSelected(AppTab.ASSIGN) }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp)
+                    .padding(horizontal = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                // Dashboard Tab with Home Icon as requested
+                BottomNavItem(
+                    tab = AppTab.DASHBOARD,
+                    label = "Home",
+                    icon = Icons.Default.Home,
+                    isActive = currentTab == AppTab.DASHBOARD,
+                    onClick = { onTabSelected(AppTab.DASHBOARD) }
                 )
-            }
-            if (canManageUsers) {
-                TabButton(
-                    tab = AppTab.USERS,
-                    isActive = currentTab == AppTab.USERS,
-                    onClick = { onTabSelected(AppTab.USERS) }
+                BottomNavItem(
+                    tab = AppTab.RECURRING,
+                    label = "Recurring",
+                    icon = Icons.Default.Repeat,
+                    isActive = currentTab == AppTab.RECURRING,
+                    onClick = { onTabSelected(AppTab.RECURRING) }
                 )
+                BottomNavItem(
+                    tab = AppTab.ONETIME,
+                    label = "One-Time",
+                    icon = Icons.Default.AssignmentTurnedIn,
+                    isActive = currentTab == AppTab.ONETIME,
+                    onClick = { onTabSelected(AppTab.ONETIME) }
+                )
+                if (canAssign) {
+                    BottomNavItem(
+                        tab = AppTab.ASSIGN,
+                        label = "Assign",
+                        icon = Icons.Default.AddTask,
+                        isActive = currentTab == AppTab.ASSIGN,
+                        onClick = { onTabSelected(AppTab.ASSIGN) }
+                    )
+                }
+                if (canManageUsers) {
+                    BottomNavItem(
+                        tab = AppTab.USERS,
+                        label = "Users",
+                        icon = Icons.Default.People,
+                        isActive = currentTab == AppTab.USERS,
+                        onClick = { onTabSelected(AppTab.USERS) }
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun TabButton(
+private fun RowScope.BottomNavItem(
     tab: AppTab,
+    label: String,
+    icon: ImageVector,
     isActive: Boolean,
     onClick: () -> Unit
 ) {
+    val activeColor = OrangePrimary
+    val inactiveColor = Color(0xFF94A3B8)
+    val color = if (isActive) activeColor else inactiveColor
+
     Box(
         modifier = Modifier
+            .weight(1f)
+            .fillMaxHeight()
+            .clip(RoundedCornerShape(8.dp))
             .clickable(onClick = onClick)
-            .padding(horizontal = 14.dp, vertical = 12.dp)
-            .testTag("tab_${tab.name.lowercase()}")
+            .padding(vertical = 4.dp)
+            .testTag("tab_${tab.name.lowercase()}"),
+        contentAlignment = Alignment.Center
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = tab.title,
-                fontSize = 12.5.sp,
-                fontWeight = if (isActive) FontWeight.Bold else FontWeight.Medium,
-                color = if (isActive) Color.White else Color(0xFFAEBBD0)
-            )
-            Spacer(modifier = Modifier.height(6.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
             Box(
                 modifier = Modifier
-                    .width(40.dp)
-                    .height(3.dp)
-                    .background(if (isActive) OrangePrimary else Color.Transparent)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(if (isActive) NavySecondary else Color.Transparent)
+                    .padding(horizontal = 14.dp, vertical = 4.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = label,
+                    tint = color,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = label,
+                fontSize = 11.sp,
+                fontWeight = if (isActive) FontWeight.Bold else FontWeight.Medium,
+                color = color,
+                maxLines = 1,
+                textAlign = TextAlign.Center
             )
         }
     }
