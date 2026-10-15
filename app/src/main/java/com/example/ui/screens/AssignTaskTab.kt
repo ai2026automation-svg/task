@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.User
 import com.example.data.model.UserPermissions
+import com.example.ui.components.appOutlinedTextFieldColors
 import com.example.ui.theme.GoldAccent
 import com.example.ui.theme.LineBorder
 import com.example.ui.theme.NavyPrimary
@@ -170,10 +171,7 @@ fun AssignTaskTab(
                         onValueChange = { onUpdateRecurring(it, null, null, null) },
                         label = { Text("Task *") },
                         placeholder = { Text("e.g. GST Monthly Filing, Bank Reconciliation") },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("input_r_task")
@@ -195,10 +193,7 @@ fun AssignTaskTab(
                                 readOnly = true,
                                 label = { Text("Doer *") },
                                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = rDoerExpanded) },
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = OrangePrimary,
-                                    unfocusedBorderColor = LineBorder
-                                ),
+                                colors = appOutlinedTextFieldColors(),
                                 modifier = Modifier
                                     .menuAnchor()
                                     .fillMaxWidth()
@@ -224,11 +219,7 @@ fun AssignTaskTab(
                             onValueChange = {},
                             readOnly = true,
                             label = { Text("Designation") },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = LineBorder,
-                                unfocusedBorderColor = LineBorder,
-                                disabledContainerColor = Color(0xFFF7F9FC)
-                            ),
+                            colors = appOutlinedTextFieldColors(containerColor = Color(0xFFF7F9FC)),
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -249,10 +240,7 @@ fun AssignTaskTab(
                                 readOnly = true,
                                 label = { Text("Frequency *") },
                                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = rFreqExpanded) },
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = OrangePrimary,
-                                    unfocusedBorderColor = LineBorder
-                                ),
+                                colors = appOutlinedTextFieldColors(),
                                 modifier = Modifier
                                     .menuAnchor()
                                     .fillMaxWidth()
@@ -295,10 +283,7 @@ fun AssignTaskTab(
                                     Icon(Icons.Default.CalendarMonth, contentDescription = "Pick date", tint = OrangePrimary)
                                 }
                             },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
-                                unfocusedBorderColor = LineBorder
-                            ),
+                            colors = appOutlinedTextFieldColors(),
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -397,10 +382,7 @@ fun AssignTaskTab(
                         label = { Text("Task Details *") },
                         placeholder = { Text("Describe the task, deliverables, and instructions…") },
                         minLines = 3,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("input_o_details")
@@ -427,10 +409,7 @@ fun AssignTaskTab(
                                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = oDoerExpanded)
                                     }
                                 },
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = OrangePrimary,
-                                    unfocusedBorderColor = LineBorder
-                                ),
+                                colors = appOutlinedTextFieldColors(),
                                 modifier = Modifier
                                     .menuAnchor()
                                     .fillMaxWidth()
@@ -464,10 +443,7 @@ fun AssignTaskTab(
                                 readOnly = true,
                                 label = { Text("Priority") },
                                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = oPriorityExpanded) },
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = OrangePrimary,
-                                    unfocusedBorderColor = LineBorder
-                                ),
+                                colors = appOutlinedTextFieldColors(),
                                 modifier = Modifier
                                     .menuAnchor()
                                     .fillMaxWidth()
@@ -512,10 +488,7 @@ fun AssignTaskTab(
                                 Icon(Icons.Default.CalendarMonth, contentDescription = "Pick date", tint = OrangePrimary)
                             }
                         },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -525,10 +498,7 @@ fun AssignTaskTab(
                         onValueChange = { onUpdateOneTime(null, null, null, null, it) },
                         label = { Text("Attach File / Link (optional)") },
                         placeholder = { Text("https://drive.google.com/... or paste reference document link") },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier.fillMaxWidth()
                     )
 

@@ -60,6 +60,7 @@ import com.example.data.model.TaskItem
 import com.example.data.model.User
 import com.example.ui.components.PriorityBadge
 import com.example.ui.components.StatusBadge
+import com.example.ui.components.appOutlinedTextFieldColors
 import com.example.ui.theme.LineBorder
 import com.example.ui.theme.NavyPrimary
 import com.example.ui.theme.NavySecondary
@@ -138,11 +139,8 @@ fun OneTimeTasksTab(
                         },
                         placeholder = { Text("Search task, doer…", fontSize = 12.sp) },
                         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = TextMuted) },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
-                        textStyle = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                        colors = appOutlinedTextFieldColors(),
+                        textStyle = androidx.compose.ui.text.TextStyle(color = TextDark, fontSize = 12.sp),
                         modifier = Modifier
                             .width(180.dp)
                             .height(48.dp)
@@ -158,11 +156,8 @@ fun OneTimeTasksTab(
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = doerExpanded) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
-                                unfocusedBorderColor = LineBorder
-                            ),
-                            textStyle = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                            colors = appOutlinedTextFieldColors(),
+                            textStyle = androidx.compose.ui.text.TextStyle(color = TextDark, fontSize = 12.sp),
                             modifier = Modifier
                                 .menuAnchor()
                                 .width(130.dp)
@@ -203,11 +198,8 @@ fun OneTimeTasksTab(
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = priorityExpanded) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
-                                unfocusedBorderColor = LineBorder
-                            ),
-                            textStyle = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                            colors = appOutlinedTextFieldColors(),
+                            textStyle = androidx.compose.ui.text.TextStyle(color = TextDark, fontSize = 12.sp),
                             modifier = Modifier
                                 .menuAnchor()
                                 .width(125.dp)
@@ -240,11 +232,8 @@ fun OneTimeTasksTab(
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = statusExpanded) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
-                                unfocusedBorderColor = LineBorder
-                            ),
-                            textStyle = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                            colors = appOutlinedTextFieldColors(),
+                            textStyle = androidx.compose.ui.text.TextStyle(color = TextDark, fontSize = 12.sp),
                             modifier = Modifier
                                 .menuAnchor()
                                 .width(120.dp)
@@ -277,11 +266,8 @@ fun OneTimeTasksTab(
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = groupExpanded) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
-                                unfocusedBorderColor = LineBorder
-                            ),
-                            textStyle = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                            colors = appOutlinedTextFieldColors(),
+                            textStyle = androidx.compose.ui.text.TextStyle(color = TextDark, fontSize = 12.sp),
                             modifier = Modifier
                                 .menuAnchor()
                                 .width(135.dp)

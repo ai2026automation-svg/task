@@ -283,7 +283,7 @@ private fun HtmlStyleTextInput(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .border(1.dp, LineBorder, RoundedCornerShape(8.dp))
+            .border(1.5.dp, if (value.isNotEmpty()) OrangePrimary else LineBorder, RoundedCornerShape(8.dp))
             .background(Color.White)
             .padding(horizontal = 14.dp, vertical = 12.dp),
         contentAlignment = Alignment.Center
@@ -291,7 +291,7 @@ private fun HtmlStyleTextInput(
         if (value.isEmpty()) {
             Text(
                 text = placeholder,
-                color = Color(0xFFA0AEC0),
+                color = Color(0xFF94A3B8),
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center
             )
@@ -301,7 +301,8 @@ private fun HtmlStyleTextInput(
             onValueChange = onValueChange,
             textStyle = TextStyle(
                 color = TextDark,
-                fontSize = 14.sp,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center
             ),
             singleLine = true,
@@ -326,7 +327,7 @@ private fun HtmlStyleCodeInput(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .border(1.dp, LineBorder, RoundedCornerShape(8.dp))
+            .border(1.5.dp, if (value.isNotEmpty()) OrangePrimary else LineBorder, RoundedCornerShape(8.dp))
             .background(Color.White)
             .padding(horizontal = 14.dp, vertical = 10.dp),
         contentAlignment = Alignment.Center
@@ -334,7 +335,7 @@ private fun HtmlStyleCodeInput(
         if (value.isEmpty()) {
             Text(
                 text = "------",
-                color = Color(0xFFCBD5E0),
+                color = Color(0xFFCBD5E1),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 10.sp,
@@ -347,7 +348,7 @@ private fun HtmlStyleCodeInput(
             textStyle = TextStyle(
                 color = NavyPrimary,
                 fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.ExtraBold,
                 letterSpacing = 10.sp,
                 textAlign = TextAlign.Center
             ),

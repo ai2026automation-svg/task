@@ -58,6 +58,7 @@ import com.example.ui.components.DoughnutStatusChart
 import com.example.ui.components.KpiCard
 import com.example.ui.components.SimpleBarChart
 import com.example.ui.components.StatusBadge
+import com.example.ui.components.appOutlinedTextFieldColors
 import com.example.ui.theme.GoldAccent
 import com.example.ui.theme.LineBorder
 import com.example.ui.theme.NavyPrimary
@@ -145,11 +146,8 @@ fun DashboardTab(
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = typeExpanded) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
-                                unfocusedBorderColor = LineBorder
-                            ),
-                            textStyle = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                            colors = appOutlinedTextFieldColors(),
+                            textStyle = androidx.compose.ui.text.TextStyle(color = TextDark, fontSize = 12.sp),
                             modifier = Modifier
                                 .menuAnchor()
                                 .width(130.dp)
@@ -182,11 +180,8 @@ fun DashboardTab(
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = freqExpanded) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
-                                unfocusedBorderColor = LineBorder
-                            ),
-                            textStyle = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                            colors = appOutlinedTextFieldColors(),
+                            textStyle = androidx.compose.ui.text.TextStyle(color = TextDark, fontSize = 12.sp),
                             modifier = Modifier
                                 .menuAnchor()
                                 .width(130.dp)
@@ -220,11 +215,8 @@ fun DashboardTab(
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = doerExpanded) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
-                                unfocusedBorderColor = LineBorder
-                            ),
-                            textStyle = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                            colors = appOutlinedTextFieldColors(),
+                            textStyle = androidx.compose.ui.text.TextStyle(color = TextDark, fontSize = 12.sp),
                             modifier = Modifier
                                 .menuAnchor()
                                 .width(140.dp)

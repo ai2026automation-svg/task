@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.sp
 import com.example.data.model.TaskItem
 import com.example.data.model.User
 import com.example.ui.components.StatusBadge
+import com.example.ui.components.appOutlinedTextFieldColors
 import com.example.ui.theme.LineBorder
 import com.example.ui.theme.NavyPrimary
 import com.example.ui.theme.NavySecondary
@@ -139,11 +140,8 @@ fun RecurringTasksTab(
                         },
                         placeholder = { Text("Search task, doer…", fontSize = 12.sp) },
                         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = TextMuted) },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
-                        textStyle = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                        colors = appOutlinedTextFieldColors(),
+                        textStyle = androidx.compose.ui.text.TextStyle(color = TextDark, fontSize = 12.sp),
                         modifier = Modifier
                             .width(180.dp)
                             .height(48.dp)
@@ -159,11 +157,8 @@ fun RecurringTasksTab(
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = doerExpanded) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
-                                unfocusedBorderColor = LineBorder
-                            ),
-                            textStyle = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                            colors = appOutlinedTextFieldColors(),
+                            textStyle = androidx.compose.ui.text.TextStyle(color = TextDark, fontSize = 12.sp),
                             modifier = Modifier
                                 .menuAnchor()
                                 .width(130.dp)
@@ -204,11 +199,8 @@ fun RecurringTasksTab(
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = freqExpanded) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
-                                unfocusedBorderColor = LineBorder
-                            ),
-                            textStyle = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                            colors = appOutlinedTextFieldColors(),
+                            textStyle = androidx.compose.ui.text.TextStyle(color = TextDark, fontSize = 12.sp),
                             modifier = Modifier
                                 .menuAnchor()
                                 .width(120.dp)
@@ -241,11 +233,8 @@ fun RecurringTasksTab(
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = statusExpanded) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
-                                unfocusedBorderColor = LineBorder
-                            ),
-                            textStyle = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                            colors = appOutlinedTextFieldColors(),
+                            textStyle = androidx.compose.ui.text.TextStyle(color = TextDark, fontSize = 12.sp),
                             modifier = Modifier
                                 .menuAnchor()
                                 .width(120.dp)
@@ -278,11 +267,8 @@ fun RecurringTasksTab(
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = groupExpanded) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
-                                unfocusedBorderColor = LineBorder
-                            ),
-                            textStyle = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                            colors = appOutlinedTextFieldColors(),
+                            textStyle = androidx.compose.ui.text.TextStyle(color = TextDark, fontSize = 12.sp),
                             modifier = Modifier
                                 .menuAnchor()
                                 .width(135.dp)
@@ -316,11 +302,8 @@ fun RecurringTasksTab(
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = horizonExpanded) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
-                                unfocusedBorderColor = LineBorder
-                            ),
-                            textStyle = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                            colors = appOutlinedTextFieldColors(),
+                            textStyle = androidx.compose.ui.text.TextStyle(color = TextDark, fontSize = 12.sp),
                             modifier = Modifier
                                 .menuAnchor()
                                 .width(120.dp)

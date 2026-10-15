@@ -62,6 +62,7 @@ import com.example.data.model.TaskType
 import com.example.data.model.User
 import com.example.data.remote.AppsScriptClient
 import com.example.logic.DateUtils
+import com.example.ui.components.appOutlinedTextFieldColors
 import com.example.ui.theme.LineBorder
 import com.example.ui.theme.NavyPrimary
 import com.example.ui.theme.NavySecondary
@@ -131,11 +132,7 @@ fun CompleteTaskDialog(
                         readOnly = true,
                         label = { Text("Completed Date & Time") },
                         supportingText = { Text("Set automatically when you save — cannot be changed.") },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = LineBorder,
-                            unfocusedBorderColor = LineBorder,
-                            disabledContainerColor = Color(0xFFF3F4F6)
-                        ),
+                        colors = appOutlinedTextFieldColors(containerColor = Color(0xFFF3F4F6)),
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -146,10 +143,7 @@ fun CompleteTaskDialog(
                         label = { Text("Remarks") },
                         placeholder = { Text("Enter completion notes, remarks, or summary…") },
                         minLines = 3,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("input_complete_remarks")
@@ -161,10 +155,7 @@ fun CompleteTaskDialog(
                         onValueChange = { attachFile = it },
                         label = { Text("Attach File / Link") },
                         placeholder = { Text("https://... or link to completed file") },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -259,10 +250,7 @@ fun EditTaskDialog(
                         value = title,
                         onValueChange = { title = it },
                         label = { Text("Task Title *") },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -277,10 +265,7 @@ fun EditTaskDialog(
                             readOnly = true,
                             label = { Text("Assignee / Doer *") },
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = doerExpanded) },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
-                                unfocusedBorderColor = LineBorder
-                            ),
+                            colors = appOutlinedTextFieldColors(),
                             modifier = Modifier
                                 .menuAnchor()
                                 .fillMaxWidth()
@@ -313,10 +298,7 @@ fun EditTaskDialog(
                                 readOnly = true,
                                 label = { Text("Priority") },
                                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = priorityExpanded) },
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = OrangePrimary,
-                                    unfocusedBorderColor = LineBorder
-                                ),
+                                colors = appOutlinedTextFieldColors(),
                                 modifier = Modifier
                                     .menuAnchor()
                                     .fillMaxWidth()
@@ -342,10 +324,7 @@ fun EditTaskDialog(
                             value = attachFile,
                             onValueChange = { attachFile = it },
                             label = { Text("Reference File / Link") },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
-                                unfocusedBorderColor = LineBorder
-                            ),
+                            colors = appOutlinedTextFieldColors(),
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -371,10 +350,7 @@ fun EditTaskDialog(
                                 Icon(Icons.Default.CalendarMonth, contentDescription = "Pick date", tint = OrangePrimary)
                             }
                         },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -516,10 +492,7 @@ fun DeleteTaskDialog(
                         value = confirmationInput,
                         onValueChange = { confirmationInput = it },
                         placeholder = { Text("Type DELETE") },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = StatusDelay,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("input_confirm_delete")
@@ -620,10 +593,7 @@ fun AppsScriptConfigDialog(
                         },
                         label = { Text("Web App URL") },
                         placeholder = { Text("https://script.google.com/macros/s/.../exec") },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("input_apps_script_url")

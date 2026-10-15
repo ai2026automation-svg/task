@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import com.example.data.model.ReminderSettings
 import com.example.data.model.User
 import com.example.data.model.UserRole
+import com.example.ui.components.appOutlinedTextFieldColors
 import com.example.ui.theme.GoldAccent
 import com.example.ui.theme.LineBorder
 import com.example.ui.theme.NavyPrimary
@@ -123,20 +124,14 @@ fun UsersTab(
                         value = name,
                         onValueChange = { onUserFormChange(it, null, null, null, null) },
                         label = { Text("Name") },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier.weight(1f)
                     )
                     OutlinedTextField(
                         value = designation,
                         onValueChange = { onUserFormChange(null, it, null, null, null) },
                         label = { Text("Designation") },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -149,10 +144,7 @@ fun UsersTab(
                         value = email,
                         onValueChange = { onUserFormChange(null, null, it, null, null) },
                         label = { Text("Email Address *") },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier.weight(1f)
                     )
                     OutlinedTextField(
@@ -160,10 +152,7 @@ fun UsersTab(
                         onValueChange = { onUserFormChange(null, null, null, it, null) },
                         label = { Text("Department") },
                         placeholder = { Text("e.g. Accounts, Audit") },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -178,10 +167,7 @@ fun UsersTab(
                         readOnly = true,
                         label = { Text("Role") },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = roleExpanded) },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier
                             .menuAnchor()
                             .fillMaxWidth()
@@ -406,10 +392,7 @@ fun UsersTab(
                             onUpdateSettings(null, null, null, h.coerceIn(0, 23), null)
                         },
                         label = { Text("Reminder hour (0-23)") },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier.width(160.dp)
                     )
 
@@ -418,10 +401,7 @@ fun UsersTab(
                         onValueChange = { onUpdateSettings(null, null, null, null, it) },
                         label = { Text("Admin digest recipients") },
                         placeholder = { Text("manager@company.com, cfo@company.com") },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = OrangePrimary,
-                            unfocusedBorderColor = LineBorder
-                        ),
+                        colors = appOutlinedTextFieldColors(),
                         modifier = Modifier.weight(1f)
                     )
                 }

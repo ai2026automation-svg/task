@@ -28,8 +28,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.Alignment
@@ -64,6 +66,33 @@ import com.example.ui.theme.StatusOk
 import com.example.ui.theme.StatusPending
 import com.example.ui.theme.TextDark
 import com.example.ui.theme.TextMuted
+
+/**
+ * High-contrast, fully opaque text field colors ensuring typed text is 100% visible,
+ * crisp, and readable on all screens and devices.
+ */
+@Composable
+fun appOutlinedTextFieldColors(
+    containerColor: Color = Color.White
+): TextFieldColors = OutlinedTextFieldDefaults.colors(
+    focusedTextColor = TextDark,
+    unfocusedTextColor = TextDark,
+    disabledTextColor = TextDark.copy(alpha = 0.7f),
+    errorTextColor = Color(0xFFDC2626),
+    focusedContainerColor = containerColor,
+    unfocusedContainerColor = containerColor,
+    disabledContainerColor = Color(0xFFF3F4F6),
+    cursorColor = OrangePrimary,
+    focusedBorderColor = OrangePrimary,
+    unfocusedBorderColor = LineBorder,
+    focusedLabelColor = OrangePrimary,
+    unfocusedLabelColor = Color(0xFF4B5563),
+    disabledLabelColor = TextMuted,
+    focusedPlaceholderColor = Color(0xFF9CA3AF),
+    unfocusedPlaceholderColor = Color(0xFF9CA3AF),
+    focusedSupportingTextColor = TextMuted,
+    unfocusedSupportingTextColor = TextMuted
+)
 
 @Composable
 fun TopBar(
