@@ -120,17 +120,10 @@ fun LoginScreen(
                     color = NavyPrimary
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
                 // STEP 0: WEB APP URL
                 if (step == 0) {
-                    Text(
-                        text = "Enter your Web App URL",
-                        fontSize = 12.sp,
-                        color = TextMuted,
-                        modifier = Modifier.padding(bottom = 18.dp)
-                    )
-
                     HtmlStyleTextInput(
                         value = urlInput,
                         onValueChange = { urlInput = it },
@@ -164,13 +157,6 @@ fun LoginScreen(
 
                 // STEP 1: EMAIL
                 else if (step == 1) {
-                    Text(
-                        text = "Sign in with your email",
-                        fontSize = 12.sp,
-                        color = TextMuted,
-                        modifier = Modifier.padding(bottom = 18.dp)
-                    )
-
                     HtmlStyleTextInput(
                         value = email,
                         onValueChange = onEmailChange,

@@ -215,13 +215,11 @@ class MainViewModel(
             _uiState.update { it.copy(isLoggingIn = false) }
 
             result.fold(
-                onSuccess = { generatedCodeOrMsg ->
-                    val isDigits = generatedCodeOrMsg.all { c -> c.isDigit() }
+                onSuccess = { _ ->
                     _uiState.update {
                         it.copy(
                             loginStep = 2,
-                            lastGeneratedOtpHint = if (isDigits) generatedCodeOrMsg else "",
-                            loginMsg = if (isDigits) "Code sent! (Demo hint: $generatedCodeOrMsg)" else generatedCodeOrMsg,
+                            loginMsg = "",
                             loginIsError = false
                         )
                     }
@@ -229,7 +227,7 @@ class MainViewModel(
                 onFailure = { err ->
                     _uiState.update {
                         it.copy(
-                            loginMsg = err.message ?: "Authentication failed",
+                            loginMsg = AppsScriptClient.cleanErrorMessage(err.message),
                             loginIsError = true
                         )
                     }
@@ -259,7 +257,7 @@ class MainViewModel(
                 onFailure = { err ->
                     _uiState.update {
                         it.copy(
-                            loginMsg = err.message ?: "Verification failed",
+                            loginMsg = AppsScriptClient.cleanErrorMessage(err.message),
                             loginIsError = true
                         )
                     }

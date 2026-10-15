@@ -30,29 +30,40 @@ class TaskRepository(
     private val taskDao = database.taskDao()
     private val userDao = database.userDao()
 
-    // Transient cached OTP for offline/local login
-    private var localOtpCode: String? = null
-    private var localOtpEmail: String? = null
-
     suspend fun initializeDefaultDataIfEmpty() {
         // No mock data - live data is synced directly from the user's Google Apps Script backend
+    }
+
+    private suspend fun callAppsScript(
+        action: String,
+        httpParams: Map<String, Any?> = emptyMap(),
+        token: String? = preferences.sessionToken
+    ): Result<JSONObject> {
+        val url = preferences.appsScriptUrl.trim()
+        if (url.isBlank()) {
+            return Result.failure(IllegalStateException("Please enter your Google Apps Script Web App URL."))
+        }
+        return apiClient.callAction(action, token = token, params = httpParams)
     }
 
     suspend fun requestLoginCode(email: String): Result<String> {
         val cleanEmail = email.trim().lowercase()
         if (!cleanEmail.contains("@")) {
-            return Result.failure(IllegalArgumentException("Please enter a valid email address."))
+            return Result.failure(IllegalArgumentException("Please enter a valid email."))
         }
 
-        if (preferences.appsScriptUrl.isBlank()) {
-            return Result.failure(IllegalStateException("Please enter your Google Apps Script Web App URL first."))
-        }
-
-        val remoteResult = apiClient.callAction("requestLoginCode", params = mapOf("email" to cleanEmail))
-        return if (remoteResult.isSuccess) {
-            Result.success("Code sent to $cleanEmail via Google Apps Script.")
+        val res = callAppsScript(
+            action = "requestLoginCode",
+            httpParams = mapOf("email" to cleanEmail),
+            token = null
+        )
+        return if (res.isSuccess) {
+            val json = res.getOrThrow()
+            val msg = json.optString("message", "Code sent to $cleanEmail")
+            Result.success(msg)
         } else {
-            Result.failure(remoteResult.exceptionOrNull() ?: Exception("Failed to send code via Apps Script."))
+            val err = AppsScriptClient.cleanErrorMessage(res.exceptionOrNull()?.message)
+            Result.failure(Exception(err))
         }
     }
 
@@ -60,13 +71,13 @@ class TaskRepository(
         val cleanEmail = email.trim().lowercase()
         val cleanCode = code.trim()
 
-        if (preferences.appsScriptUrl.isBlank()) {
-            return Result.failure(IllegalStateException("Please enter your Google Apps Script Web App URL first."))
-        }
-
-        val remoteResult = apiClient.callAction("verifyLoginCode", params = mapOf("email" to cleanEmail, "code" to cleanCode))
-        if (remoteResult.isSuccess) {
-            val json = remoteResult.getOrThrow()
+        val res = callAppsScript(
+            action = "verifyLoginCode",
+            httpParams = mapOf("email" to cleanEmail, "code" to cleanCode),
+            token = null
+        )
+        if (res.isSuccess) {
+            val json = res.getOrThrow()
             val token = json.optString("token", UUID.randomUUID().toString())
             val userObj = json.optJSONObject("user")
             val name = userObj?.optString("name", cleanEmail.substringBefore("@")) ?: cleanEmail.substringBefore("@")
@@ -127,7 +138,7 @@ class TaskRepository(
             val doers = getScopedDoers(user)
             return Result.success(AuthSession(token, user, UserPermissions.forRole(role), doers = doers))
         } else {
-            return Result.failure(remoteResult.exceptionOrNull() ?: Exception("Verification failed on Google Apps Script."))
+            return Result.failure(res.exceptionOrNull() ?: Exception("Verification failed on Google Apps Script."))
         }
     }
 
