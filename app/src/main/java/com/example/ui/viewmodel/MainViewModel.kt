@@ -131,7 +131,22 @@ class MainViewModel(
     private val apiClient: AppsScriptClient
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(MainUiState())
+    private val initialUser: User? = preferences.getSavedUser()
+    private val initialPerms: UserPermissions = initialUser?.let { UserPermissions.forRole(it.role) } ?: UserPermissions()
+
+    private val _uiState = MutableStateFlow(
+        MainUiState(
+            isLoggedIn = initialUser != null,
+            currentUser = initialUser,
+            permissions = initialPerms,
+            scopedDoers = if (initialUser != null) listOf(initialUser) else emptyList(),
+            appsScriptUrl = preferences.appsScriptUrl,
+            settings = preferences.getSettings(),
+            rDoer = initialUser?.name ?: "",
+            rDesignation = initialUser?.designation ?: "",
+            oDoer = initialUser?.name ?: ""
+        )
+    )
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
     init {
@@ -151,10 +166,11 @@ class MainViewModel(
             }
 
             if (savedToken.isNotBlank() && savedEmail.isNotBlank()) {
-                val resumeResult = repository.verifyLoginCode(savedEmail, "123456")
-                if (resumeResult.isSuccess) {
-                    val session = resumeResult.getOrThrow()
-                    onLoginSuccess(session.user, session.perms, session.doers)
+                val session = repository.getSavedSession()
+                if (session != null) {
+                    onLoginSuccess(session.user, session.perms, session.doers, showWelcomeToast = false)
+                } else {
+                    _uiState.update { it.copy(isLoggedIn = false, currentUser = null) }
                 }
             }
         }
@@ -267,7 +283,12 @@ class MainViewModel(
         }
     }
 
-    private fun onLoginSuccess(user: User, perms: UserPermissions, doers: List<User>) {
+    private fun onLoginSuccess(
+        user: User,
+        perms: UserPermissions,
+        doers: List<User>,
+        showWelcomeToast: Boolean = true
+    ) {
         _uiState.update {
             it.copy(
                 isLoggedIn = true,
@@ -283,7 +304,9 @@ class MainViewModel(
                 oDoer = if (perms.assignOthers) (doers.firstOrNull()?.name ?: "") else user.name
             )
         }
-        showToast("Signed in as ${user.name} (${user.role})")
+        if (showWelcomeToast) {
+            showToast("Signed in as ${user.name} (${user.role})")
+        }
         refreshData()
     }
 

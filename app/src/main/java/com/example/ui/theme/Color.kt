@@ -2,26 +2,43 @@ package com.example.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val NavyPrimary = Color(0xFF0A1628)
-val NavySecondary = Color(0xFF0D2142)
-val NavyTertiary = Color(0xFF102A50)
-val GoldAccent = Color(0xFFC9A84C)
-val OrangePrimary = Color(0xFFE07030)
-val OrangeHover = Color(0xFFE8500A)
+// Primary Branding
+val PrimaryNavy = Color(0xFF0F172A)
+val PrimaryBlue = Color(0xFF1D4ED8)
+val AccentBlue = Color(0xFF2563EB)
+val AccentCyan = Color(0xFF0284C7)
 
-val BackgroundLight = Color(0xFFF4F6F9)
+// High-Contrast Solid Text Colors (Fixes text opacity issue)
+val TextDark = Color(0xFF0F172A)
+val TextSecondary = Color(0xFF334155)
+val TextMuted = Color(0xFF64748B)
+val TextLight = Color(0xFFFFFFFF)
+
+// Surfaces & Backgrounds
+val BgCanvas = Color(0xFFF8FAFC)
 val CardSurface = Color(0xFFFFFFFF)
-val LineBorder = Color(0xFFE6E8EC)
-val TextDark = Color(0xFF1A1A1A)
-val TextMuted = Color(0xFF6B7280)
+val SurfaceVariant = Color(0xFFF1F5F9)
 
-val StatusOk = Color(0xFF1E7D46)
-val StatusDelay = Color(0xFFC0392B)
-val StatusPending = Color(0xFFC9A84C)
+// Borders
+val BorderNormal = Color(0xFF94A3B8)
+val BorderFocused = Color(0xFF1D4ED8)
+val BorderSubtle = Color(0xFFE2E8F0)
 
-val PriorityHighBg = Color(0xFFFDE2DC)
-val PriorityHighText = Color(0xFFC0392B)
-val PriorityMediumBg = Color(0xFFFDF2D8)
-val PriorityMediumText = Color(0xFFA8862F)
-val PriorityLowBg = Color(0xFFE2F0E6)
-val PriorityLowText = Color(0xFF1E7D46)
+// Status & Badges
+val StatusPendingBg = Color(0xFFFEF3C7)
+val StatusPendingText = Color(0xFF92400E)
+
+val StatusProgressBg = Color(0xFFDBEAFE)
+val StatusProgressText = Color(0xFF1E40AF)
+
+val StatusCompletedBg = Color(0xFFD1FAE5)
+val StatusCompletedText = Color(0xFF065F46)
+
+val PriorityHighBg = Color(0xFFFEE2E2)
+val PriorityHighText = Color(0xFF991B1B)
+
+val PriorityMediumBg = Color(0xFFFEF3C7)
+val PriorityMediumText = Color(0xFF92400E)
+
+val PriorityLowBg = Color(0xFFE0E7FF)
+val PriorityLowText = Color(0xFF3730A3)

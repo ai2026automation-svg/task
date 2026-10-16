@@ -15,6 +15,7 @@ class TaskPreferences(context: Context) {
         private const val KEY_USER_ROLE = "user_role"
         private const val KEY_USER_DEPT = "user_dept"
         private const val KEY_USER_DESIGNATION = "user_designation"
+        private const val KEY_USER_ROW = "user_row"
 
         private const val KEY_NOTIFY_ASSIGN = "notify_assign"
         private const val KEY_NOTIFY_COMPLETE = "notify_complete"
@@ -51,7 +52,34 @@ class TaskPreferences(context: Context) {
         get() = prefs.getString(KEY_USER_DESIGNATION, "") ?: ""
         set(value) = prefs.edit().putString(KEY_USER_DESIGNATION, value).apply()
 
-    fun saveUserSession(token: String, email: String, name: String, role: String, dept: String, designation: String) {
+    var userRow: Int
+        get() = prefs.getInt(KEY_USER_ROW, 2)
+        set(value) = prefs.edit().putInt(KEY_USER_ROW, value).apply()
+
+    fun getSavedUser(): com.example.data.model.User? {
+        val email = userEmail
+        val token = sessionToken
+        if (email.isBlank() || token.isBlank()) return null
+        val role = com.example.data.model.UserRole.fromString(userRole)
+        return com.example.data.model.User(
+            row = userRow,
+            name = userName.ifBlank { email.substringBefore("@") },
+            designation = userDesignation,
+            email = email,
+            department = userDepartment,
+            role = role
+        )
+    }
+
+    fun saveUserSession(
+        token: String,
+        email: String,
+        name: String,
+        role: String,
+        dept: String,
+        designation: String,
+        row: Int = 2
+    ) {
         prefs.edit()
             .putString(KEY_SESSION_TOKEN, token)
             .putString(KEY_USER_EMAIL, email)
@@ -59,6 +87,7 @@ class TaskPreferences(context: Context) {
             .putString(KEY_USER_ROLE, role)
             .putString(KEY_USER_DEPT, dept)
             .putString(KEY_USER_DESIGNATION, designation)
+            .putInt(KEY_USER_ROW, row)
             .apply()
     }
 
@@ -70,6 +99,7 @@ class TaskPreferences(context: Context) {
             .remove(KEY_USER_ROLE)
             .remove(KEY_USER_DEPT)
             .remove(KEY_USER_DESIGNATION)
+            .remove(KEY_USER_ROW)
             .apply()
     }
 

@@ -94,7 +94,7 @@ class TaskRepository(
                 department = dept,
                 role = role
             )
-            preferences.saveUserSession(token, cleanEmail, name, role.name, dept, desig)
+            preferences.saveUserSession(token, cleanEmail, name, role.name, dept, desig, user.row)
 
             // Cache user locally
             userDao.insertUser(
@@ -253,6 +253,33 @@ class TaskRepository(
         }
     }
 
+    suspend fun getSavedSession(): AuthSession? {
+        val token = preferences.sessionToken
+        val email = preferences.userEmail
+        if (token.isBlank() || email.isBlank()) {
+            return null
+        }
+
+        val role = UserRole.fromString(preferences.userRole)
+        val cachedUserEntity = userDao.getUserByEmail(email)
+        val user = User(
+            row = cachedUserEntity?.rowNum ?: preferences.userRow,
+            name = preferences.userName.ifBlank { cachedUserEntity?.name ?: email.substringBefore("@") },
+            designation = preferences.userDesignation.ifBlank { cachedUserEntity?.designation ?: "" },
+            email = email,
+            department = preferences.userDepartment.ifBlank { cachedUserEntity?.department ?: "" },
+            role = role
+        )
+
+        val doers = getScopedDoers(user)
+        return AuthSession(
+            token = token,
+            user = user,
+            perms = UserPermissions.forRole(role),
+            doers = doers
+        )
+    }
+
     suspend fun getScopedDoers(currentUser: User): List<User> {
         val allUsers = userDao.getAllUsers().first().map {
             User(
@@ -266,15 +293,16 @@ class TaskRepository(
         }
 
         return when (currentUser.role) {
-            UserRole.ADMIN -> allUsers
+            UserRole.ADMIN -> if (allUsers.isEmpty()) listOf(currentUser) else allUsers
             UserRole.MODERATOR -> {
                 if (currentUser.department.isBlank()) {
                     listOf(currentUser)
                 } else {
-                    allUsers.filter {
+                    val filtered = allUsers.filter {
                         it.department.equals(currentUser.department, ignoreCase = true) ||
                         it.email.equals(currentUser.email, ignoreCase = true)
                     }
+                    if (filtered.isEmpty()) listOf(currentUser) else filtered
                 }
             }
             UserRole.USER -> listOf(currentUser)

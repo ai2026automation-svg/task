@@ -2,98 +2,79 @@ package com.example.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.data.model.Priority
 import com.example.data.model.TaskItem
 import com.example.data.model.TaskStatus
-import com.example.data.model.TaskType
+import com.example.data.model.User
 
 @Entity(tableName = "tasks")
 data class TaskEntity(
-    @PrimaryKey
-    val id: String,
-    val rowNum: Int = 0,
-    val sno: Int = 0,
-    val taskId: String = "",
-    val task: String,
-    val type: String,
-    val doerName: String,
-    val doerEmail: String = "",
-    val designation: String = "",
-    val frequency: String = "",
-    val priority: String = "Medium",
+    @PrimaryKey val id: String,
+    val title: String,
+    val description: String,
+    val assignedTo: String,
+    val assignedToEmail: String,
+    val priority: String,
+    val status: String,
     val dueDate: String,
-    val completedDate: String = "",
-    val delay: String = "",
-    val status: String = "Pending",
-    val remarks: String = "",
-    val attachFile: String = "",
-    val assignerFile: String = "",
-    val assignedBy: String = "",
-    val assignedByEmail: String = "",
-    val dueEpochMillis: Long = 0L
+    val category: String,
+    val remarks: String,
+    val createdAt: Long
 ) {
-    fun toTaskItem(canManage: Boolean = false): TaskItem {
-        return TaskItem(
-            id = id,
-            rowNum = rowNum,
-            sno = sno,
-            taskId = taskId,
-            task = task,
-            type = if (type == "RECURRING") TaskType.RECURRING else TaskType.ONE_TIME,
-            doerName = doerName,
-            doerEmail = doerEmail,
-            designation = designation,
-            frequency = frequency,
-            priority = priority,
-            dueDate = dueDate,
-            completedDate = completedDate,
-            delay = delay,
-            status = TaskStatus.fromString(status),
-            remarks = remarks,
-            attachFile = attachFile,
-            assignerFile = assignerFile,
-            assignedBy = assignedBy,
-            assignedByEmail = assignedByEmail,
-            canManage = canManage,
-            dueEpochMillis = dueEpochMillis
-        )
-    }
+    fun toDomain(): TaskItem = TaskItem(
+        id = id,
+        title = title,
+        description = description,
+        assignedTo = assignedTo,
+        assignedToEmail = assignedToEmail,
+        priority = runCatching { Priority.valueOf(priority) }.getOrDefault(Priority.MEDIUM),
+        status = runCatching { TaskStatus.valueOf(status) }.getOrDefault(TaskStatus.PENDING),
+        dueDate = dueDate,
+        category = category,
+        remarks = remarks,
+        createdAt = createdAt
+    )
 
     companion object {
-        fun fromTaskItem(item: TaskItem): TaskEntity {
-            return TaskEntity(
-                id = item.id,
-                rowNum = item.rowNum,
-                sno = item.sno,
-                taskId = item.taskId,
-                task = item.task,
-                type = item.type.name,
-                doerName = item.doerName,
-                doerEmail = item.doerEmail,
-                designation = item.designation,
-                frequency = item.frequency,
-                priority = item.priority,
-                dueDate = item.dueDate,
-                completedDate = item.completedDate,
-                delay = item.delay,
-                status = item.status.displayName,
-                remarks = item.remarks,
-                attachFile = item.attachFile,
-                assignerFile = item.assignerFile,
-                assignedBy = item.assignedBy,
-                assignedByEmail = item.assignedByEmail,
-                dueEpochMillis = item.dueEpochMillis
-            )
-        }
+        fun fromDomain(item: TaskItem): TaskEntity = TaskEntity(
+            id = item.id,
+            title = item.title,
+            description = item.description,
+            assignedTo = item.assignedTo,
+            assignedToEmail = item.assignedToEmail,
+            priority = item.priority.name,
+            status = item.status.name,
+            dueDate = item.dueDate,
+            category = item.category,
+            remarks = item.remarks,
+            createdAt = item.createdAt
+        )
     }
 }
 
 @Entity(tableName = "users")
 data class UserEntity(
-    @PrimaryKey
-    val email: String,
-    val rowNum: Int = 0,
+    @PrimaryKey val email: String,
     val name: String,
-    val designation: String = "",
-    val department: String = "",
-    val role: String = "User"
-)
+    val role: String,
+    val department: String,
+    val designation: String
+) {
+    fun toDomain(): User = User(
+        email = email,
+        name = name,
+        role = role,
+        department = department,
+        designation = designation
+    )
+
+    companion object {
+        fun fromDomain(user: User): UserEntity = UserEntity(
+            email = user.email,
+            name = user.name,
+            role = user.role,
+            department = user.department,
+            designation = user.designation
+        )
+    }
+}
