@@ -47,6 +47,10 @@ jobs:
           fi
           chmod +x gradlew
 
+      - name: Remove duplicate launcher icons
+        run: |
+          find app/src/main/res/ -name "ic_launcher*.webp" -delete || true
+
       - name: Build Debug APK
         run: |
           if [ -f ./gradlew ]; then
